@@ -1,0 +1,38 @@
+import numpy as np
+import matplotlib.pyplot as plt
+import pandas as pd
+
+#reading the data and applying slicing and dicing
+dataset = pd.read_csv('Data.csv')
+X= dataset.iloc[:,0:3].values
+y= dataset.iloc[:,-1].values
+
+#replacing missing(NaN) values with the median
+from sklearn.preprocessing import Imputer
+imputer = Imputer(missing_values='NaN', strategy='most_frequent', axis=0)
+imputer.fit(X[:,1:14])
+X[:,1:14]=imputer.transform(X[:,1:14])
+
+#encoding the categorical values
+from sklearn.preprocessing import LabelEncoder
+labelencoder_X = LabelEncoder()
+X[:,0]=labelencoder_X.fit_transform(X[:,0])
+
+labelencoder_y=LabelEncoder()
+y=labelencoder_y.fit_transform(y)
+
+#Dummy variable encoding and sparse matrix creation
+from sklearn.preprocessing import OneHotEncoder
+onehotencoder=OneHotEncoder(categorical_features=[0])
+X=onehotencoder.fit_transform(X)
+X=X.toarray()
+
+#Applying feature scaling to get the data on similar scale
+from sklearn.preprocessing import StandardScaler
+sc= StandardScaler()
+X=sc.fit_transform(X)
+
+#creating scatter plot
+from pandas.plotting import scatter_matrix
+dataset.hist(bins=30)
+scatter_matrix(dataset, alpha=1.0)
