@@ -1,0 +1,48 @@
+import numpy as np
+import matplotlib.pyplot as plt
+import pandas as pd
+
+from sklearn.datasets import load_breast_cancer
+dataset = load_breast_cancer()
+X = dataset.data
+y = dataset.target
+
+from sklearn.model_selection import train_test_split
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2,random_state = 0)
+
+from sklearn.tree import DecisionTreeClassifier
+dtf = DecisionTreeClassifier(criterion="entropy", max_depth = 2)
+dtf.fit(X_train, y_train)
+
+dtf.score(X_train, y_train)
+dtf.score(X_test, y_test)
+dtf.score(X, y)
+
+from sklearn.tree import export_graphviz
+export_graphviz(dtf, out_file="tree.dot",class_name=["malignant", "benign"],
+                feature_names=cancer, impurity = False, filled = True)
+
+import graphviz
+with open("tree.dot") as f:
+    dot_graph = f.read()
+    graphviz.Source(dot_graph)
+
+
+from sklearn.naive_bayes import GaussianNB
+clf = GaussianNB()
+clf.fit(X_train,y_train)
+
+clf.score(X_train, y_train)
+clf.score(X_test, y_test)
+clf.score(X, y)
+
+
+from sklearn.svm import SVC
+svc = SVC()
+svc.fit(X_train,y_train)
+
+svc.score(X_train, y_train)
+svc.score(X_test, y_test)
+svc.score(X, y)
+
+    

@@ -1,0 +1,95 @@
+import numpy as np
+import matplotlib.pyplot as plt
+import pandas as pd
+
+dataset = pd.read_csv("auto.csv", names = ["symboling","normalized-losses","make","fuel-type","aspiration",
+                                          "num-of-doors","body-style","drive-wheels","engine-location",
+                                          "wheel-base","length","width","height","curb-weight","engine-type",
+                                          "num-of-cyclinder","engine-size","fuel-system","bore","stroke",
+                                          "compression-ratio","horsepower","peak-rpm","city-mpg","highway-mpg",
+                                          "price"])
+dataset = dataset.replace("?","NaN")
+X = dataset.iloc[:,0:25].values
+y = dataset.iloc[:, -1].values
+
+dataset = dataset.replace("?","NaN")
+
+
+
+#encoding the categorical values
+from sklearn.preprocessing import LabelEncoder
+#labelencoder_X = LabelEncoder()
+#X[:,1]=labelencoder_X.fit_transform(X[:,1])
+labelencoder_X = LabelEncoder()
+X[:,2]=labelencoder_X.fit_transform(X[:,2])
+
+labelencoder_X = LabelEncoder()
+X[:,3]=labelencoder_X.fit_transform(X[:,3])
+
+labelencoder_X = LabelEncoder()
+X[:,4]=labelencoder_X.fit_transform(X[:,4])
+
+labelencoder_X = LabelEncoder()
+X[:,5]=labelencoder_X.fit_transform(X[:,5])
+labelencoder_X = LabelEncoder()
+X[:,6]=labelencoder_X.fit_transform(X[:,6])
+labelencoder_X = LabelEncoder()
+X[:,7]=labelencoder_X.fit_transform(X[:,7])
+labelencoder_X = LabelEncoder()
+X[:,8]=labelencoder_X.fit_transform(X[:,8])
+labelencoder_X = LabelEncoder()
+X[:,14]=labelencoder_X.fit_transform(X[:,14])
+labelencoder_X = LabelEncoder()
+X[:,15]=labelencoder_X.fit_transform(X[:,15])
+labelencoder_X = LabelEncoder()
+X[:,17]=labelencoder_X.fit_transform(X[:,17])
+labelencoder_X = LabelEncoder()
+#X[:,18]=labelencoder_X.fit_transform(X[:,18])
+#labelencoder_X = LabelEncoder()
+#X[:,19]=labelencoder_X.fit_transform(X[:,19])
+
+
+labelencoder_y = LabelEncoder()
+y = labelencoder_y.fit_transform(y)
+
+
+from sklearn.preprocessing import OneHotEncoder
+onehotencoder=OneHotEncoder(categorical_features=[2,3,4,5,6,7,8,14,15,17])
+X=onehotencoder.fit_transform(X)
+X=X.toarray()
+
+from sklearn.preprocessing import Imputer
+imputer = Imputer(missing_values='NaN', strategy='most_frequent', axis=0)
+imputer.fit(X[:,0:25])
+X[:,0:25]=imputer.transform(X[:,0:25])
+y=imputer.fit_transform(y)
+from sklearn.model_selection import train_test_split
+X_train, X_test, y_train, y_test = train_test_split(X, y, random_state = 0)
+
+from sklearn.linear_model import LogisticRegression
+log_reg = LogisticRegression()
+log_reg.fit(X_train, y_train)
+
+y_pred = log_reg.predict(X_test)
+
+log_reg.score(X_train, y_train)
+
+log_reg.score(X_test, y_test)
+
+log_reg.score(X, y)
+
+from sklearn.tree import DecisionTreeClassifier
+dtf = DecisionTreeClassifier(criterion="entropy", max_depth = 2)
+dtf.fit(X_train, y_train)
+
+dtf.score(X_train, y_train)
+dtf.score(X_test, y_test)
+dtf.score(X, y)
+
+from sklearn.naive_bayes import GaussianNB
+clf = GaussianNB()
+clf.fit(X_train,y_train)
+
+clf.score(X_train, y_train)
+clf.score(X_test, y_test)
+clf.score(X, y)

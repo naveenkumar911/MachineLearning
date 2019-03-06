@@ -1,0 +1,71 @@
+import numpy as np
+import matplotlib.pyplot as plt
+import pandas as pd
+
+dataset = pd.read_csv('sal.csv', names = ['age', 'workclass',
+                                          'fnlwgt', 'education',
+                                          'education-num',
+                                          'marital-status',
+                                          'occupation',
+                                          'relationship',
+                                          'race',
+                                          'gender',
+                                          'capital-gain',
+                                          'capital-loss',
+                                          'hours-per-week',
+                                          'native-country',
+                                          'salary'], na_values = ' ?')
+
+
+
+X = dataset.iloc[:, 0:14].values
+y = dataset.iloc[:, -1].values
+
+#encoding salary
+from sklearn.preprocessing import LabelEncoder
+labelencoder_y = LabelEncoder()
+y = labelencoder_y.fit_transform(y)
+
+# Encoded Workclass(column by column differently)
+#labelencoder doesn't accept list
+labelencoder_X = LabelEncoder()
+X[:, 13] = labelencoder_X.fit_transform(X[:, 13].astype(str))
+X[:, 1] = labelencoder_X.fit_transform(X[:, 1].astype(str))
+X[:, 5] = labelencoder_X.fit_transform(X[:, 5].astype(str))
+X[:, 3] = labelencoder_X.fit_transform(X[:, 3].astype(str))
+X[:, 7] = labelencoder_X.fit_transform(X[:, 7].astype(str))
+X[:, 8] = labelencoder_X.fit_transform(X[:, 8].astype(str))
+X[:, 9] = labelencoder_X.fit_transform(X[:, 9].astype(str))
+X[:, 6] = labelencoder_X.fit_transform(X[:, 6].astype(str))
+#X[:, 14] = labelencoder_X.fit_transform(X[:, 14].astype(str))
+#X[:, 13] = labelencoder_X.fit_transform(X[:, 13].astype(str))
+#X[:, 13] = labelencoder_X.fit_transform(X[:, 13].astype(str))
+#X[:, 13] = labelencoder_X.fit_transform(X[:, 13].astype(str))
+#X[:, 13] = labelencoder_X.fit_transform(X[:, 13].astype(str))
+
+#Dummy variable encoding
+from sklearn.preprocessing import OneHotEncoder
+onehotencoder=OneHotEncoder(categorical_features=[1,3,5,7,8,9,6,13])
+X=onehotencoder.fit_transform(X)
+X=X.toarray
+
+from sklearn.preprocessing import Imputer
+imputer = Imputer()
+X[:, 0:14] = imputer.fit_transform(X[:, 0:14])
+
+from sklearn.linear_model import LogisticRegression
+log_reg = LogisticRegression()
+log_reg.fit(X, y)
+
+from sklearn.model_selection import train_test_split
+X_train, X_test, y_train, y_test = train_test_split(X, y, random_state = 0)
+
+from sklearn.naive_bayes import GaussianNB
+clf = GaussianNB()
+clf.fit(X_train,y_train)
+
+clf.score(X_train, y_train)
+clf.score(X_test, y_test)
+clf.score(X, y)
+
+log_reg.score(X, y)
